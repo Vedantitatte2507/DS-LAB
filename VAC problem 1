@@ -1,0 +1,60 @@
+Problem 1: Given a Binary Search Tree and a range [low, high]. Find all the numbers in the BST that lie in the given range.
+ Note: Element greater than or equal to root go to the right side.
+Code:
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct TreeNode {
+    int val;
+    struct TreeNode* left;
+    struct TreeNode* right;
+} TreeNode;
+
+TreeNode* newNode(int val) {
+    TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
+    node->val = val;
+    node->left = node->right = NULL;
+    return node;
+}
+
+TreeNode* insert(TreeNode* root, int val) {
+    if (root == NULL) return newNode(val);
+    if (val < root->val)
+        root->left = insert(root->left, val);
+    else // val >= root->val
+        root->right = insert(root->right, val);
+    return root;
+}
+
+void rangeInBST(TreeNode* root, int low, int high) {
+    if (root == NULL) return;
+    if (root->val > low)
+        rangeInBST(root->left, low, high);
+    if (root->val >= low && root->val <= high)
+        printf("%d ", root->val);
+    if (root->val <= high)
+        rangeInBST(root->right, low, high);
+}
+
+int main() {
+    TreeNode* root = NULL;
+    int n, val, low, high;
+    printf("Vedanti Tatte\nPRN:25070521154\nSec:C\n2ndSem 'C-2'\n");
+    printf("Enter number of nodes in BST: ");
+    scanf("%d", &n);
+
+    printf("Enter %d node values:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &val);
+        root = insert(root, val);
+    }
+
+    printf("Enter range (low high): ");
+    scanf("%d %d", &low, &high);
+
+    printf("Nodes in range [%d, %d]: ", low, high);
+    rangeInBST(root, low, high);
+    printf("\n");
+
+    return 0;
+}
