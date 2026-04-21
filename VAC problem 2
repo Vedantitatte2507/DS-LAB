@@ -1,0 +1,101 @@
+Problem 2: Given a string s, composed of different combinations of '(' , ')', '{', '}', '[', ']'. Determine whether the Expression is balanced or not.
+ An expression is balanced if:
+ 1. Each opening bracket has a corresponding closing bracket of the same type. 
+2. Opening brackets must be closed in the correct order.
+ Concept: Stack
+Code:
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Stack structure
+typedef struct Stack {
+    int top;
+    unsigned capacity;
+    char* array;
+} Stack;
+
+// Create a stack of given capacity
+Stack* createStack(unsigned capacity) {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    stack->capacity = capacity;
+    stack->top = -1;
+    stack->array = (char*)malloc(stack->capacity * sizeof(char));
+    return stack;
+}
+
+// Check if stack is empty
+int isEmpty(Stack* stack) {
+    return stack->top == -1;
+}
+
+// Push item to stack
+void push(Stack* stack, char item) {
+    if (stack->top == (int)(stack->capacity - 1)) {
+        // Optional: handle stack overflow
+        return;
+    }
+    stack->array[++stack->top] = item;
+}
+
+// Pop item from stack
+char pop(Stack* stack) {
+    if (isEmpty(stack)) return '\0';
+    return stack->array[stack->top--];
+}
+
+// Check if two brackets are matching pair
+int isMatchingPair(char opening, char closing) {
+    return (opening == '(' && closing == ')') ||
+           (opening == '{' && closing == '}') ||
+           (opening == '[' && closing == ']');
+}
+
+// Check if the expression is balanced
+int isBalanced(char* expr) {
+    int n = strlen(expr);
+    Stack* stack = createStack(n);
+
+    for (int i = 0; i < n; i++) {
+        char ch = expr[i];
+        // If opening bracket, push onto stack
+        if (ch == '(' || ch == '{' || ch == '[') {
+            push(stack, ch);
+        }
+        // If closing bracket, check top of stack
+        else if (ch == ')' || ch == '}' || ch == ']') {
+            if (isEmpty(stack)) {
+                free(stack->array);
+                free(stack);
+                return 0; // Unbalanced: closing bracket with no matching opening
+            }
+            char top = pop(stack);
+            if (!isMatchingPair(top, ch)) {
+                free(stack->array);
+                free(stack);
+                return 0; // Unbalanced: mismatched pair
+            }
+        }
+    }
+
+    int balanced = isEmpty(stack);
+    free(stack->array);
+    free(stack);
+    return balanced;
+}
+
+// Main function to test the code
+int main() {
+    char expr[107]; // Constraint: s.size() ≤ 106 (+1 for null terminator)
+    printf("Vedanti tatte\nPRN:25070521154\nSec:C\n2ndSem 'C-2'\n");
+    printf("Enter the expression: ");
+    scanf("%106s", expr);
+
+    if (isBalanced(expr)) {
+        printf("true\n");
+    } else {
+        printf("false\n");
+    }
+
+    return 0;
+}
